@@ -1,0 +1,334 @@
+/* =============================================
+   Dashboard & Inner Pages — Stylesheet
+   Complements style.css — uses same variables
+   ============================================= */
+
+/* ---------- NAVBAR (Dashboard variant) ---------- */
+/* The main style.css navbar is position:fixed with no bg.
+   Dashboard pages need a solid background navbar. */
+.dashboard-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    background: #0b1221;
+    background: var(--navy, #0b1221);
+    padding: 12px 0;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- NAV ICONS ---------- */
+.nav-icons {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+.nav-icons a,
+.nav-icons i {
+    color: #cbd5e1;
+    color: var(--slate-300, #cbd5e1);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.nav-icons a:hover,
+.nav-icons a:hover i,
+.nav-icons i:hover {
+    color: #ffffff;
+    color: var(--white, #ffffff);
+}
+
+/* ---------- USER MENU ---------- */
+.nav-user-menu {
+    position: relative;
+    color: #ffffff;
+    color: var(--white, #ffffff);
+    z-index: 10000;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: var(--radius);
+    transition: background var(--transition);
+}
+
+.user-info:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.user-info i {
+    color: var(--slate-300);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    min-width: 220px;
+    z-index: 1001;
+    overflow: hidden;
+    border: 1px solid var(--slate-200);
+}
+
+.nav-user-menu:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu ul {
+    list-style: none;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.dropdown-menu ul li a {
+    display: block;
+    padding: 10px 20px;
+    color: var(--slate-600);
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    transition: all var(--transition);
+}
+
+.dropdown-menu ul li a:hover {
+    background: var(--slate-100);
+    color: var(--indigo);
+}
+
+.dropdown-menu ul li:last-child a {
+    color: var(--rose);
+    border-top: 1px solid var(--slate-200);
+}
+
+.dropdown-menu ul li:last-child a:hover {
+    background: rgba(244, 63, 94, 0.06);
+}
+
+/* ---------- DASHBOARD MAIN ---------- */
+.dashboard-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 60px;
+    text-align: center;
+    background-image: url('../images/fleet-background.webp');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    z-index: 0;
+}
+
+.dashboard-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(11, 18, 33, 0.75), rgba(99, 102, 241, 0.25));
+    z-index: 1;
+}
+
+.welcome-message {
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-message h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-message h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 400;
+    color: #e2e8f0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- INNER PAGE CONTENT ---------- */
+.page-content {
+    padding: 100px 0 60px;
+    min-height: 100vh;
+    background: #f1f5f9;
+    background: var(--slate-100, #f1f5f9);
+}
+
+.page-content--compact {
+    display: flex;
+    align-items: center;
+    padding-top: 70px;
+    padding-bottom: 30px;
+}
+
+.section-header--compact {
+    margin-bottom: 24px !important;
+}
+
+.upload-layout {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.form-actions {
+    text-align: center;
+}
+
+/* ---------- FORM CARD ---------- */
+.form-card {
+    background: var(--white);
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-card--compact {
+    padding: 28px 32px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-card .form-group {
+    margin-bottom: 16px;
+}
+
+.form-card label {
+    display: block;
+    margin-bottom: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.9rem;
+}
+
+.form-card input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px dashed var(--slate-300);
+    border-radius: var(--radius);
+    background: var(--slate-100);
+    font-family: 'Inter', sans-serif;
+    color: var(--slate-600);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color var(--transition);
+}
+
+.form-card input[type="file"]:hover {
+    border-color: var(--indigo);
+}
+
+/* ---------- ALERT MESSAGES ---------- */
+.alert {
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 16px;
+}
+
+.alert-info {
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--indigo-dark);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* ---------- SECONDARY BUTTON ---------- */
+.btn-secondary {
+    background: var(--navy);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(11, 18, 33, 0.25);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(11, 18, 33, 0.4);
+}
+
+/* ---------- TABLE ---------- */
+.table-responsive {
+    overflow-x: auto;
+    margin-bottom: 40px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    font-family: 'Inter', sans-serif;
+}
+
+.table th {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    text-align: left;
+}
+
+.table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--slate-200);
+    color: var(--slate-600);
+    font-size: 0.9rem;
+}
+
+.table tbody tr:hover {
+    background: var(--slate-100);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table--compact th {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+}
+
+.table--compact td {
+    padding: 6px 10px;
+    font-size: 0.82rem;
+}
+
+.summary-condition {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--navy);
+    font-size: 1.3rem;
+    margin: 30px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--indigo);
+    display: inline-block;
+}

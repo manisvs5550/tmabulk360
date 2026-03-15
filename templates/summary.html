@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Performance Summary{% endblock %}
+
+{% block content %}
+<div class="page-content page-content--compact">
+    <div class="container">
+        <div class="section-header section-header--compact">
+            <p class="section-tag">Ship Performance</p>
+            <h2>Performance <span class="text-gradient">Summary</span></h2>
+        </div>
+
+        {% for vc, data in summary.items() %}
+            <h3 class="summary-condition">Vessel Condition: {{ vc }}</h3>
+            <div class="table-responsive">
+                <table class="table table--compact">
+                    <thead>
+                        <tr>
+                            <th>Speed (kn)</th>
+                            <th>Weather</th>
+                            <th>Time (hrs)</th>
+                            <th>Distance (nm)</th>
+                            <th>Consumption (mt)</th>
+                            <th>Avg Speed (kn)</th>
+                            <th>Avg Cons. (mt/day)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for speed in [13.5, 12.0] %}
+                            {% for weather_type in ["all_weather", "good_weather"] %}
+                                {% set key = speed ~ "_" ~ weather_type %}
+                                {% set item = data[key] %}
+                                <tr>
+                                    <td>{{ speed }}</td>
+                                    <td>{{ weather_type.replace('_', ' ') | title }}</td>
+                                    <td>{{ item.total_time }}</td>
+                                    <td>{{ item.total_distance }}</td>
+                                    <td>{{ item.total_consumption }}</td>
+                                    <td>{{ item.avg_speed }}</td>
+                                    <td>{{ item.avg_consumption_per_day }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+        <div class="form-actions" style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem;">
+            <a href="{{ url_for('ship_performance') }}" class="btn btn-primary btn-lg">Back to Upload</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

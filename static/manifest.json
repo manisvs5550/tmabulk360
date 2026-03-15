@@ -1,0 +1,22 @@
+{
+    "name": "TMA Operations 360",
+    "short_name": "TMA ops360",
+    "description": "Actionable analytics for fleet operators and pool members",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0b1221",
+    "theme_color": "#6366f1",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/static/images/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/images/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TMA Operations 360{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=5">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+    <nav class="dashboard-navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="{{ url_for('dashboard') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="TMA ops360" class="logo-img">
+            </a>
+            <div class="nav-icons">
+                <a href="{{ url_for('dashboard') }}" title="Dashboard"><i class="fa-solid fa-house"></i></a>
+                <a href="{{ url_for('ship_performance') }}" title="Ship Performance"><i class="fa-solid fa-ship"></i></a>
+                <i class="fa-solid fa-water"></i>
+                <i class="fa-solid fa-anchor"></i>
+                <i class="fa-solid fa-file-alt"></i>
+                <i class="fa-solid fa-gas-pump"></i>
+                <i class="fa-solid fa-shield-alt"></i>
+                <i class="fa-solid fa-leaf"></i>
+                <i class="fa-solid fa-globe"></i>
+            </div>
+            <div class="nav-user-menu">
+                <div class="user-info">
+                    <i class="fa-solid fa-cog"></i>
+                    <i class="fa-solid fa-user"></i>
+                    <span>Rahul Iyer</span>
+                    <i class="fa-solid fa-caret-down"></i>
+                </div>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li><a href="#">Users</a></li>
+                        <li><a href="#">Vessels</a></li>
+                        <li><a href="#">User Inputs</a></li>
+                        <li><a href="#">AIS Data</a></li>
+                        <li><a href="#">Track Summary</a></li>
+                        <li><a href="#">User Input</a></li>
+                        <li><a href="#">Veson Report</a></li>
+                        <li><a href="#">AIS/Veson Count</a></li>
+                        <li><a href="#">Hull Max.Scales</a></li>
+                        <li><a href="#">Hull Action</a></li>
+                        <li><a href="#">Overview Summary</a></li>
+                        <li><a href="{{ url_for('ship_performance') }}">Ship Performance Report</a></li>
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

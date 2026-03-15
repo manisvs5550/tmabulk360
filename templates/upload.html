@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Upload Files — Ship Performance{% endblock %}
+
+{% block content %}
+<div class="page-content page-content--compact">
+    <div class="container">
+        <div class="section-header section-header--compact">
+            <p class="section-tag">Ship Performance</p>
+            <h2>Upload <span class="text-gradient">Data Files</span></h2>
+        </div>
+
+        <div class="upload-layout">
+            <form method="post" enctype="multipart/form-data" class="form-card form-card--compact">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ais_file">AIS Data File</label>
+                        <input type="file" name="ais_file" id="ais_file">
+                    </div>
+                    <div class="form-group">
+                        <label for="weather_file">Weather Data File</label>
+                        <input type="file" name="weather_file" id="weather_file">
+                    </div>
+                </div>
+
+                {% if error %}
+                    <p class="alert alert-danger">{{ error }}</p>
+                {% endif %}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg"><i class="fa-solid fa-upload"></i> Upload &amp; Generate Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

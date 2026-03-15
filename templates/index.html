@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMA Operations 360 — Actionable Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="TMA ops360" class="logo-img">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#fleet">Fleet</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">Sign In</a>
+            <button class="nav-toggle" aria-label="Toggle menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== HERO ========== -->
+    <header class="hero" id="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <p class="hero-tag">Actionable Analytics</p>
+            <h1>TMA Operations <span class="text-gradient">360</span></h1>
+            <p class="hero-subtitle">
+                Automated and advanced analytics for our operators and our pool members.
+                Visual indicators for performance monitoring and commercial optimisation.
+                Standardised, simple and sustainable.
+            </p>
+            <div class="hero-actions">
+                <a href="https://tma-bulk.eu/managed-fleet.html" class="btn btn-primary btn-lg" target="_blank" rel="noopener noreferrer">Explore Our Fleet</a>
+                <a href="#features" class="btn btn-ghost btn-lg">View Features <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-pill">
+                    <span class="stat-number">25+</span>
+                    <span class="stat-label">Vessels</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-number">60+</span>
+                    <span class="stat-label">Voyages / Year</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-number">5yr</span>
+                    <span class="stat-label">Avg. Age</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== FEATURES ========== -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-tag">Platform Capabilities</p>
+                <h2>Everything You Need to<br><span class="text-gradient">Optimise Operations</span></h2>
+                <p class="section-desc">From daily voyage insights to AI-driven stowage — our suite covers every angle of fleet performance.</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon icon-blue">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3>Daily Performance Insights</h3>
+                    <p>Ongoing vessel performance at sea, port metrics, and hull evaluation indicators — refreshed every day.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon icon-emerald">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h3>Reports</h3>
+                    <p>Generate and browse standardised performance reports across your entire fleet with one click.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon icon-amber">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+                    <h3>Cargo Holds</h3>
+                    <p>Cargo hold condition evaluations, loading preparations, cleaning schedules, and inventory management.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon icon-violet">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3>Stowage Optimisation</h3>
+                    <p>AI-driven optimised advice on stowage decisions for safe operations and maximised lift.</p>
+                </div>
+                <!-- Card 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon icon-rose">
+                        <i class="fa-solid fa-anchor"></i>
+                    </div>
+                    <h3>Hull Market Place</h3>
+                    <p>Compare hull cleaning costs globally, view historic data, and order cleaning through vetted vendors.</p>
+                </div>
+                <!-- Card 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon icon-teal">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3>Standard Operating Procedures</h3>
+                    <p>Minimum common standards for operational and commercial performance across the fleet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== MANAGED FLEET ========== -->
+    <section class="fleet" id="fleet">
+        <div class="container">
+            <div class="fleet-layout">
+                <div class="fleet-image">
+                    <img src="{{ url_for('static', filename='images/fleet-background.webp') }}" alt="TMA Bulk Fleet" class="fleet-main-img">
+                    <div class="fleet-image-badge">
+                        <span class="badge-number">25+</span>
+                        <span class="badge-text">Modern Vessels</span>
+                    </div>
+                </div>
+                <div class="fleet-content">
+                    <p class="section-tag">Managed Fleet Excellence</p>
+                    <h2>Commercial Management<br>You Can <span class="text-gradient">Rely On</span></h2>
+                    <p class="fleet-desc">
+                        Our managed fleet service provides comprehensive commercial and operational management
+                        for modern Handysize dry bulk vessels — leveraging forward freight strategy, transparent
+                        reporting, and performance benchmarking.
+                    </p>
+                    <ul class="fleet-checks">
+                        <li><i class="fa-solid fa-circle-check"></i> Modern fleet with average age of 5 years</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Proven track record of superior TCE performance</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Transparent monthly reporting &amp; benchmarking</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Forward freight strategy implementation</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Comprehensive operational management</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Industry-leading utilisation rates</li>
+                    </ul>
+                    <a href="https://tma-bulk.eu/team-list.html" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Contact Our Team</a>
+                </div>
+            </div>
+
+            <!-- Fleet stats bar -->
+            <div class="fleet-stats-bar">
+                <div class="fleet-stat">
+                    <i class="fa-solid fa-ship"></i>
+                    <div>
+                        <strong>25+</strong>
+                        <span>Modern Vessels</span>
+                    </div>
+                </div>
+                <div class="fleet-stat">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <div>
+                        <strong>5 Years</strong>
+                        <span>Average Age</span>
+                    </div>
+                </div>
+                <div class="fleet-stat">
+                    <i class="fa-solid fa-route"></i>
+                    <div>
+                        <strong>60+</strong>
+                        <span>Annual Voyages</span>
+                    </div>
+                </div>
+                <div class="fleet-stat">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <div>
+                        <strong>Optimised</strong>
+                        <span>TCE Performance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CONTACT / GET STARTED ========== -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-tag">Get Started</p>
+                <h2>Ready to Optimise<br><span class="text-gradient">Your Fleet?</span></h2>
+                <p class="section-desc">Reach out for a consultation or explore what we can offer your operations.</p>
+            </div>
+
+            <div class="contact-layout">
+                <!-- Form -->
+                <div class="contact-form-wrap">
+                    <h3>Request Consultation</h3>
+                    <form action="{{ url_for('contact') }}" method="POST" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required placeholder="john@company.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company" placeholder="Your company">
+                        </div>
+                        <div class="form-group">
+                            <label for="reason">Reason *</label>
+                            <textarea id="reason" name="reason" rows="4" required placeholder="How can we help?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+                    </form>
+                </div>
+
+                <!-- Info cards -->
+                <div class="contact-info-wrap">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <h4>Email Us</h4>
+                        <a href="mailto:management@tma-bulk.com">management@tma-bulk.com</a>
+                        <p>Get in touch for fleet management inquiries</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                        <h4>Call Us</h4>
+                        <a href="tel:+494030082400">+49 40 300824-00</a>
+                        <p>Speak directly with our commercial team</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <h4>Visit Us</h4>
+                        <a href="https://www.google.com/maps?q=Brooktorkai+18,+20457+Hamburg,+Germany" target="_blank" rel="noopener noreferrer">Brooktorkai 18, 20457 Hamburg, Germany</a>
+                        <p>Maritime capital of Europe</p>
+                    </div>
+
+                    <!-- What We Offer -->
+                    <div class="offer-cards">
+                        <div class="offer-card">
+                            <i class="fa-solid fa-handshake"></i>
+                            <h4>Fleet Management Consultation</h4>
+                            <p>Personalised assessment of your vessels' potential.</p>
+                        </div>
+                        <div class="offer-card">
+                            <i class="fa-solid fa-chart-bar"></i>
+                            <h4>Performance Brochure</h4>
+                            <p>Detailed fleet performance &amp; benchmarks overview.</p>
+                        </div>
+                        <div class="offer-card">
+                            <i class="fa-solid fa-globe"></i>
+                            <h4>Market Analysis</h4>
+                            <p>Current market insights &amp; positioning strategies.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand -->
+                <div class="footer-brand">
+                    <a href="{{ url_for('index') }}" class="nav-logo footer-logo">
+                        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="TMA ops360" class="logo-img">
+                    </a>
+                    <p>Professional fleet management services for modern handysize dry bulk vessels. Delivering superior TCE performance, transparent and strategic commercial management.</p>
+                    <div class="footer-social">
+                        <a href="https://www.linkedin.com/company/tma-bulk" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="mailto:management@tma-bulk.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+                        <a href="tel:+494036082400" aria-label="Phone"><i class="fa-solid fa-phone"></i></a>
+                        <a href="https://www.google.com/maps?q=Brooktorkai+18,+20457+Hamburg,+Germany" aria-label="Location" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-location-dot"></i></a>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html" target="_blank" rel="noopener noreferrer">Managed Fleet</a></li>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html" target="_blank" rel="noopener noreferrer">Performance Analytics</a></li>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html" target="_blank" rel="noopener noreferrer">Commercial Management</a></li>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html" target="_blank" rel="noopener noreferrer">Fleet Consultation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="https://tma-bulk.eu/tma-bulk-pool.html" target="_blank" rel="noopener noreferrer">About TMA</a></li>
+                        <li><a href="https://tma-bulk.eu/team-list.html" target="_blank" rel="noopener noreferrer">Our Team</a></li>
+                        <li><a href="https://tma-bulk.eu/career.html" target="_blank" rel="noopener noreferrer">Careers</a></li>
+                        <li><a href="https://tma-bulk.eu/#newsfeed" target="_blank" rel="noopener noreferrer">Newsfeed</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html" target="_blank" rel="noopener noreferrer">Fleet Performance Reports</a></li>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html" target="_blank" rel="noopener noreferrer">Market Analysis</a></li>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html" target="_blank" rel="noopener noreferrer">Technical Specifications</a></li>
+                        <li><a href="https://tma-bulk.eu/managed-fleet.html#footer-areas" target="_blank" rel="noopener noreferrer">Contact Support</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 TMA ops 360. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="https://tma-bulk.eu/privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                    <a href="https://tma-bulk.eu/legal-notice.html" target="_blank" rel="noopener noreferrer">Legal Notice</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Connectivity banner -->
+    <div id="offline-banner" class="offline-banner" style="display:none;">
+        <i class="fa-solid fa-satellite-dish"></i>
+        <span>You are offline — cached content is being served. Form submissions will be queued.</span>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then(reg => console.log('SW registered, scope:', reg.scope))
+                .catch(err => console.warn('SW registration failed:', err));
+        }
+    </script>
+</body>
+</html>

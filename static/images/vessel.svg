@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2744"/>
+      <stop offset="100%" stop-color="#2d4a7a"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0b1221"/>
+    </linearGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="800" height="260" fill="url(#sky)"/>
+  <!-- Water -->
+  <rect y="260" width="800" height="160" fill="url(#water)"/>
+  <!-- Sun glow -->
+  <circle cx="600" cy="180" r="60" fill="#f97066" opacity="0.3"/>
+  <circle cx="600" cy="180" r="30" fill="#f97066" opacity="0.6"/>
+  <!-- Ship hull -->
+  <polygon points="200,260 250,300 550,300 600,260" fill="#475569"/>
+  <!-- Ship body -->
+  <rect x="260" y="220" width="280" height="40" rx="4" fill="#64748b"/>
+  <!-- Bridge -->
+  <rect x="440" y="180" width="60" height="40" rx="3" fill="#94a3b8"/>
+  <rect x="450" y="170" width="40" height="10" rx="2" fill="#cbd5e1"/>
+  <!-- Mast -->
+  <line x1="470" y1="130" x2="470" y2="170" stroke="#94a3b8" stroke-width="3"/>
+  <!-- Cargo holds -->
+  <rect x="280" y="225" width="40" height="30" rx="2" fill="#6366f1" opacity="0.6"/>
+  <rect x="330" y="225" width="40" height="30" rx="2" fill="#6366f1" opacity="0.5"/>
+  <rect x="380" y="225" width="40" height="30" rx="2" fill="#6366f1" opacity="0.4"/>
+  <!-- Water waves -->
+  <path d="M0,280 Q100,270 200,280 T400,280 T600,280 T800,280 L800,420 L0,420 Z" fill="url(#water)" opacity="0.5"/>
+  <!-- Text -->
+  <text x="400" y="370" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#64748b" font-weight="600">Placeholder — Replace with vessel photo</text>
+</svg>
