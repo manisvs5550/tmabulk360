@@ -468,3 +468,52 @@ body.sidebar-collapsed .dashboard-navbar {
     border-bottom: 2px solid var(--indigo);
     display: inline-block;
 }
+
+/* ---------- SP (Ship Performance) PAGE LAYOUT ---------- */
+.sp-wrapper {
+    padding: 90px 30px 40px;
+    min-height: 100vh;
+    background: var(--slate-100, #f1f5f9);
+}
+
+.sp-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sp-header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--navy, #0b1221);
+    margin-bottom: 6px;
+}
+
+.sp-header h1 i {
+    color: var(--indigo, #6366f1);
+    margin-right: 8px;
+}
+
+.sp-header .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--slate-500, #64748b);
+}
+
+.sp-body {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ---------- ALERT SUCCESS / DANGER ---------- */
+.alert-success {
+    background: rgba(16, 185, 129, 0.08);
+    color: #065f46;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.alert-danger {
+    background: rgba(244, 63, 94, 0.08);
+    color: #9f1239;
+    border: 1px solid rgba(244, 63, 94, 0.2);
+}
