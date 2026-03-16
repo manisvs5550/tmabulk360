@@ -18,6 +18,142 @@
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* ---------- NAV LEFT (hamburger + logo) ---------- */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    color: var(--slate-300, #cbd5e1);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: var(--radius);
+    transition: background var(--transition), color var(--transition);
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    color: var(--white, #ffffff);
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+    position: fixed;
+    top: 62px;
+    left: 0;
+    width: 230px;
+    height: calc(100vh - 62px);
+    background: var(--navy-light, #131d33);
+    z-index: 9998;
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.3s ease;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    color: var(--slate-300, #cbd5e1);
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background var(--transition), color var(--transition);
+}
+
+.sidebar-link i {
+    font-size: 1rem;
+    min-width: 20px;
+    text-align: center;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--white, #ffffff);
+}
+
+.sidebar-link.active {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--indigo, #6366f1);
+    border-left: 3px solid var(--indigo, #6366f1);
+}
+
+.sidebar.collapsed .sidebar-link span {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-link {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+/* ---------- BODY SHIFT FOR SIDEBAR ---------- */
+body {
+    padding-left: 230px;
+    transition: padding-left 0.3s ease;
+}
+
+body.sidebar-collapsed {
+    padding-left: 60px;
+}
+
+.dashboard-navbar {
+    padding-left: 230px;
+    transition: padding-left 0.3s ease;
+}
+
+body.sidebar-collapsed .dashboard-navbar {
+    padding-left: 60px;
+}
+
+/* ---------- RESPONSIVE: SIDEBAR ---------- */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 230px;
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+        width: 230px;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    body,
+    body.sidebar-collapsed {
+        padding-left: 0;
+    }
+
+    .dashboard-navbar,
+    body.sidebar-collapsed .dashboard-navbar {
+        padding-left: 0;
+    }
+}
+
 /* ---------- NAV ICONS ---------- */
 .nav-icons {
     display: flex;
