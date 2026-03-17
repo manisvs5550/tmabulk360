@@ -87,6 +87,11 @@ def inventory_submit():
                     qty = int(value)
                 except (ValueError, TypeError):
                     continue
+                if qty < 0:
+                    continue
+                min_qty = item.get("min_qty")
+                if min_qty is not None and qty != 0 and qty < min_qty:
+                    continue
                 conn.execute(
                     "INSERT INTO inventory_submissions (username, item_no, item_name, qty_requested, submitted_at) VALUES (?, ?, ?, ?, ?)",
                     (username, item["no"], item["item"], qty, now),

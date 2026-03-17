@@ -56,7 +56,10 @@
                                         min="0"
                                         class="rob-input"
                                         placeholder="0"
+                                        {% if item.min_qty is not none %}data-min="{{ item.min_qty }}"{% endif %}
+                                        oninput="validateRob(this)"
                                     >
+                                    <div class="rob-error" id="err_{{ item.no }}"></div>
                                 </td>
                                 <td class="cell-remarks">{{ item.remarks }}</td>
                             </tr>
@@ -74,4 +77,33 @@
         </div>
     </div>
 </div>
+<script>
+function validateRob(input) {
+    var val = input.value.trim();
+    var minQty = input.dataset.min ? parseInt(input.dataset.min) : null;
+    var errEl = input.parentElement.querySelector('.rob-error');
+
+    if (val === '' || val === '0') {
+        input.classList.remove('rob-input--error');
+        errEl.textContent = '';
+        return;
+    }
+
+    var num = parseInt(val);
+    if (isNaN(num) || num < 0) {
+        input.classList.add('rob-input--error');
+        errEl.textContent = 'Must be 0 or above';
+        return;
+    }
+
+    if (minQty !== null && num > 0 && num < minQty) {
+        input.classList.add('rob-input--error');
+        errEl.textContent = 'Min ' + minQty;
+        return;
+    }
+
+    input.classList.remove('rob-input--error');
+    errEl.textContent = '';
+}
+</script>
 {% endblock %}

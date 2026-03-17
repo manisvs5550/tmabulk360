@@ -720,6 +720,27 @@ body.sidebar-collapsed .dashboard-navbar {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
+.rob-input--error {
+    border-color: #ef4444;
+    background: #fef2f2;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.rob-input--error:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.rob-error {
+    font-size: 0.72rem;
+    color: #ef4444;
+    font-weight: 600;
+    margin-top: 3px;
+    min-height: 0;
+    line-height: 1.2;
+}
+}
+
 /* Outline button variant */
 .btn-outline {
     display: inline-flex;
