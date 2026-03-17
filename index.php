@@ -1,15 +1,16 @@
+<?php require_once __DIR__ . '/config.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TMA Operations 360 — Actionable Analytics</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="static/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="manifest" href="static/manifest.json">
     <meta name="theme-color" content="#6366f1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,15 +20,15 @@
     <!-- ========== NAVBAR ========== -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
-            <a href="{{ url_for('index') }}" class="nav-logo">
-                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="TMA ops360" class="logo-img">
+            <a href="index.php" class="nav-logo">
+                <img src="static/images/logo.svg" alt="TMA ops360" class="logo-img">
             </a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#fleet">Fleet</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
-            <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">Sign In</a>
+            <a href="login.php" class="btn btn-outline btn-sm">Sign In</a>
             <button class="nav-toggle" aria-label="Toggle menu">
                 <i class="fa-solid fa-bars"></i>
             </button>
@@ -133,7 +134,7 @@
         <div class="container">
             <div class="fleet-layout">
                 <div class="fleet-image">
-                    <img src="{{ url_for('static', filename='images/fleet-background.webp') }}" alt="TMA Bulk Fleet" class="fleet-main-img">
+                    <img src="static/images/fleet-background.webp" alt="TMA Bulk Fleet" class="fleet-main-img">
                     <div class="fleet-image-badge">
                         <span class="badge-number">25+</span>
                         <span class="badge-text">Modern Vessels</span>
@@ -206,7 +207,7 @@
                 <!-- Form -->
                 <div class="contact-form-wrap">
                     <h3>Request Consultation</h3>
-                    <form action="{{ url_for('contact') }}" method="POST" class="contact-form">
+                    <form action="contact.php" method="POST" class="contact-form">
                         <div class="form-group">
                             <label for="name">Full Name *</label>
                             <input type="text" id="name" name="name" required placeholder="John Doe">
@@ -277,8 +278,8 @@
             <div class="footer-grid">
                 <!-- Brand -->
                 <div class="footer-brand">
-                    <a href="{{ url_for('index') }}" class="nav-logo footer-logo">
-                        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="TMA ops360" class="logo-img">
+                    <a href="index.php" class="nav-logo footer-logo">
+                        <img src="static/images/logo.svg" alt="TMA ops360" class="logo-img">
                     </a>
                     <p>Professional fleet management services for modern handysize dry bulk vessels. Delivering superior TCE performance, transparent and strategic commercial management.</p>
                     <div class="footer-social">
@@ -339,7 +340,7 @@
         <span>You are offline — cached content is being served. Form submissions will be queued.</span>
     </div>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="static/js/main.js"></script>
     <script>
         // Register service worker
         if ('serviceWorker' in navigator) {

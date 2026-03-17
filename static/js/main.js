@@ -91,7 +91,7 @@ async function syncQueuedForms() {
     for (const item of queue) {
         try {
             const params = new URLSearchParams(item.data);
-            const resp = await fetch('/contact', {
+            const resp = await fetch('contact.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: params.toString(),

@@ -1,0 +1,31 @@
+RewriteEngine On
+
+# Serve service worker from root
+RewriteRule ^sw\.js$ static/sw.js [L]
+
+# Redirect / to index.php
+RewriteRule ^$ index.php [L]
+
+# Redirect /offline to offline.php
+RewriteRule ^offline$ offline.php [L]
+
+# Protect SQLite database from direct access
+<FilesMatch "\.sqlite3$">
+    Require all denied
+</FilesMatch>
+
+# Protect config and includes from direct access
+<FilesMatch "^config\.php$">
+    Require all denied
+</FilesMatch>
+
+<Files "*.php">
+    # Ensure PHP files are processed
+    SetHandler application/x-httpd-php
+</Files>
+
+# Deny access to includes directory
+RewriteRule ^includes/ - [F,L]
+
+# Deny access to uploads directory listing
+Options -Indexes

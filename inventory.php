@@ -1,7 +1,13 @@
-{% extends "base.html" %}
-{% block title %}Inventory — Tools for Cleaning & Maintenance{% endblock %}
+<?php
+require_once __DIR__ . '/config.php';
+require_login();
 
-{% block content %}
+$success = isset($_GET['success']);
+$page_title = 'Inventory — Tools for Cleaning & Maintenance';
+$current_page = 'inventory';
+require_once __DIR__ . '/includes/header.php';
+?>
+
 <div class="page-content">
     <div class="inv-wrapper">
         <div class="inv-header">
@@ -9,20 +15,20 @@
             <p class="subtitle">Enter ROB (Remaining on Board) quantities and submit</p>
         </div>
 
-        {% if success %}
+        <?php if ($success): ?>
         <div class="inv-alert inv-alert-success">
             <i class="fa-solid fa-circle-check"></i> Inventory submitted successfully!
         </div>
-        {% endif %}
+        <?php endif; ?>
 
         <div class="inv-body">
             <div class="inv-actions-top">
-                <a href="{{ url_for('inventory_history') }}" class="btn btn-outline">
+                <a href="inventory_history.php" class="btn btn-outline">
                     <i class="fa-solid fa-clock-rotate-left"></i> View Submission History
                 </a>
             </div>
 
-            <form method="POST" action="{{ url_for('inventory_submit') }}">
+            <form method="POST" action="inventory_submit.php">
                 <div class="inv-table-wrap">
                     <table class="inv-table">
                         <thead>
@@ -38,32 +44,32 @@
                             <tr class="inv-category-row">
                                 <td colspan="5"><i class="fa-solid fa-wrench" style="margin-right:6px;opacity:.6"></i> Tools for Cleaning and Maintenance</td>
                             </tr>
-                            {% for item in items %}
+                            <?php foreach (INVENTORY_ITEMS as $item): ?>
                             <tr>
-                                <td class="cell-no">{{ item.no }}</td>
-                                <td class="cell-item">{{ item.item }}</td>
+                                <td class="cell-no"><?= $item['no'] ?></td>
+                                <td class="cell-item"><?= e($item['item']) ?></td>
                                 <td class="cell-min">
-                                    {% if item.min_qty is not none %}
-                                        <span class="min-badge">{{ item.min_qty }}</span>
-                                    {% else %}
+                                    <?php if ($item['min_qty'] !== null): ?>
+                                        <span class="min-badge"><?= $item['min_qty'] ?></span>
+                                    <?php else: ?>
                                         <span class="min-badge min-badge--empty">—</span>
-                                    {% endif %}
+                                    <?php endif; ?>
                                 </td>
                                 <td class="cell-rob">
                                     <input
                                         type="number"
-                                        name="rob_{{ item.no }}"
+                                        name="rob_<?= $item['no'] ?>"
                                         min="0"
                                         class="rob-input"
                                         placeholder="0"
-                                        {% if item.min_qty is not none %}data-min="{{ item.min_qty }}"{% endif %}
+                                        <?php if ($item['min_qty'] !== null): ?>data-min="<?= $item['min_qty'] ?>"<?php endif; ?>
                                         oninput="validateRob(this)"
                                     >
-                                    <div class="rob-error" id="err_{{ item.no }}"></div>
+                                    <div class="rob-error" id="err_<?= $item['no'] ?>"></div>
                                 </td>
-                                <td class="cell-remarks">{{ item.remarks }}</td>
+                                <td class="cell-remarks"><?= e($item['remarks']) ?></td>
                             </tr>
-                            {% endfor %}
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -106,4 +112,5 @@ function validateRob(input) {
     errEl.textContent = '';
 }
 </script>
-{% endblock %}
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

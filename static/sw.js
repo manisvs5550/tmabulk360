@@ -1,11 +1,11 @@
 // TMA Operations 360 — Service Worker
 // Caches shell + static assets for offline maritime use
 
-const CACHE_NAME = 'tmaops360-v5';
+const CACHE_NAME = 'tmaops360-v6';
 const SHELL_ASSETS = [
     '/',
-    '/login',
-    '/offline',
+    '/login.php',
+    '/offline.php',
     '/static/css/style.css',
     '/static/css/dashboard.css',
     '/static/js/main.js',
@@ -70,7 +70,7 @@ self.addEventListener('fetch', (event) => {
             })
             .catch(() =>
                 caches.match(request).then((cached) => {
-                    return cached || caches.match('/offline');
+                    return cached || caches.match('/offline.php');
                 })
             )
     );
@@ -90,7 +90,7 @@ async function syncQueuedForms() {
         try {
             const response = await cache.match(request);
             const body = await response.text();
-            await fetch('/contact', {
+            await fetch('/contact.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: body,

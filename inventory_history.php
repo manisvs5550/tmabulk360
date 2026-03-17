@@ -1,7 +1,17 @@
-{% extends "base.html" %}
-{% block title %}Inventory Submission History{% endblock %}
+<?php
+require_once __DIR__ . '/config.php';
+require_login();
 
-{% block content %}
+$db = get_db();
+$rows = $db->query(
+    'SELECT username, item_no, item_name, qty_requested, submitted_at FROM inventory_submissions ORDER BY submitted_at DESC, item_no'
+)->fetchAll();
+
+$page_title = 'Inventory Submission History';
+$current_page = 'inventory_history';
+require_once __DIR__ . '/includes/header.php';
+?>
+
 <div class="page-content">
     <div class="inv-wrapper">
         <div class="inv-header">
@@ -11,12 +21,12 @@
 
         <div class="inv-body">
             <div class="inv-actions-top">
-                <a href="{{ url_for('inventory') }}" class="btn btn-outline">
+                <a href="inventory.php" class="btn btn-outline">
                     <i class="fa-solid fa-arrow-left"></i> Back to Inventory Form
                 </a>
             </div>
 
-            {% if rows %}
+            <?php if (!empty($rows)): ?>
             <div class="inv-table-wrap">
                 <table class="inv-table">
                     <thead>
@@ -29,25 +39,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for row in rows %}
+                        <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td>{{ row['submitted_at'] }}</td>
-                            <td>{{ row['username'] }}</td>
-                            <td class="cell-no">{{ row['item_no'] }}</td>
-                            <td>{{ row['item_name'] }}</td>
-                            <td class="cell-min">{{ row['qty_requested'] }}</td>
+                            <td><?= e($row['submitted_at']) ?></td>
+                            <td><?= e($row['username']) ?></td>
+                            <td class="cell-no"><?= (int)$row['item_no'] ?></td>
+                            <td><?= e($row['item_name']) ?></td>
+                            <td class="cell-min"><?= (int)$row['qty_requested'] ?></td>
                         </tr>
-                        {% endfor %}
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
-            {% else %}
+            <?php else: ?>
             <div class="inv-empty">
                 <i class="fa-solid fa-box-open"></i>
                 <p>No submissions yet.</p>
             </div>
-            {% endif %}
+            <?php endif; ?>
         </div>
     </div>
 </div>
-{% endblock %}
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

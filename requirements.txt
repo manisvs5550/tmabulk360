@@ -1,8 +1,0 @@
-flask>=3.0
-gunicorn
-waitress>=3.0
-playwright
-pandas
-openpyxl
-hypercorn
-asgiref

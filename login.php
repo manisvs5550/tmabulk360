@@ -1,10 +1,38 @@
+<?php
+require_once __DIR__ . '/config.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    try {
+        $db = get_db();
+        $stmt = $db->prepare('SELECT id, username, password, language FROM users WHERE username = ?');
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['logged_in'] = true;
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['language'] = $user['language'] ?? 'en';
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            $error = t('invalid_credentials');
+        }
+    } catch (Exception $ex) {
+        $error = t('invalid_credentials');
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In — TMA Operations 360</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="static/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -59,15 +87,15 @@
 <body>
     <div class="login-page">
         <div class="login-card">
-            <a href="{{ url_for('index') }}" class="nav-logo">
-                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="TMA ops360" class="logo-img logo-img-dark">
+            <a href="index.php" class="nav-logo">
+                <img src="static/images/logo.svg" alt="TMA ops360" class="logo-img logo-img-dark">
             </a>
             <h2>Welcome Back</h2>
             <p class="login-sub">Sign in to access your fleet dashboard</p>
-            {% if error %}
-                <p class="error" style="color: red; text-align: center;">{{ error }}</p>
-            {% endif %}
-            <form method="POST" action="{{ url_for('login') }}">
+            <?php if (!empty($error)): ?>
+                <p class="error" style="color: red; text-align: center;"><?= e($error) ?></p>
+            <?php endif; ?>
+            <form method="POST" action="login.php">
                 <div class="form-group">
                     <label for="login-username">Username</label>
                     <input type="text" id="login-username" name="username" required placeholder="Enter your username">
