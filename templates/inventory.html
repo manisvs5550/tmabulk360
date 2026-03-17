@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Inventory — Tools for Cleaning & Maintenance{% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="inv-wrapper">
+        <div class="inv-header">
+            <h1><i class="fa-solid fa-clipboard-list"></i> Tools for Cleaning &amp; Maintenance</h1>
+            <p class="subtitle">Enter ROB (Remaining on Board) quantities and submit</p>
+        </div>
+
+        {% if success %}
+        <div class="inv-alert inv-alert-success">
+            <i class="fa-solid fa-circle-check"></i> Inventory submitted successfully!
+        </div>
+        {% endif %}
+
+        <div class="inv-body">
+            <div class="inv-actions-top">
+                <a href="{{ url_for('inventory_history') }}" class="btn btn-outline">
+                    <i class="fa-solid fa-clock-rotate-left"></i> View Submission History
+                </a>
+            </div>
+
+            <form method="POST" action="{{ url_for('inventory_submit') }}">
+                <div class="inv-table-wrap">
+                    <table class="inv-table">
+                        <thead>
+                            <tr>
+                                <th class="col-no">No</th>
+                                <th class="col-item">Item</th>
+                                <th class="col-min">Min Required</th>
+                                <th class="col-rob">ROB Qty</th>
+                                <th class="col-remarks">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="inv-category-row">
+                                <td colspan="5"><i class="fa-solid fa-wrench" style="margin-right:6px;opacity:.6"></i> Tools for Cleaning and Maintenance</td>
+                            </tr>
+                            {% for item in items %}
+                            <tr>
+                                <td class="cell-no">{{ item.no }}</td>
+                                <td class="cell-item">{{ item.item }}</td>
+                                <td class="cell-min">
+                                    {% if item.min_qty is not none %}
+                                        <span class="min-badge">{{ item.min_qty }}</span>
+                                    {% else %}
+                                        <span class="min-badge min-badge--empty">—</span>
+                                    {% endif %}
+                                </td>
+                                <td class="cell-rob">
+                                    <input
+                                        type="number"
+                                        name="rob_{{ item.no }}"
+                                        min="0"
+                                        class="rob-input"
+                                        placeholder="0"
+                                    >
+                                </td>
+                                <td class="cell-remarks">{{ item.remarks }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="inv-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Inventory
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

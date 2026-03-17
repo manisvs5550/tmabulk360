@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Inventory Submission History{% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="inv-wrapper">
+        <div class="inv-header">
+            <h1><i class="fa-solid fa-clock-rotate-left"></i> Submission History</h1>
+            <p class="subtitle">All inventory ROB submissions</p>
+        </div>
+
+        <div class="inv-body">
+            <div class="inv-actions-top">
+                <a href="{{ url_for('inventory') }}" class="btn btn-outline">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Inventory Form
+                </a>
+            </div>
+
+            {% if rows %}
+            <div class="inv-table-wrap">
+                <table class="inv-table">
+                    <thead>
+                        <tr>
+                            <th>Date &amp; Time</th>
+                            <th>Username</th>
+                            <th class="col-no">Item No</th>
+                            <th>Item Name</th>
+                            <th>Qty (ROB)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td>{{ row['submitted_at'] }}</td>
+                            <td>{{ row['username'] }}</td>
+                            <td class="cell-no">{{ row['item_no'] }}</td>
+                            <td>{{ row['item_name'] }}</td>
+                            <td class="cell-min">{{ row['qty_requested'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="inv-empty">
+                <i class="fa-solid fa-box-open"></i>
+                <p>No submissions yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
