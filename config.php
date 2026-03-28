@@ -6,17 +6,17 @@
 
 session_start();
 
-// --- Database (PostgreSQL) ---
-define('DB_HOST', 'localhost');
-define('DB_PORT', '5432');
-define('DB_NAME', 'tmabulk360');
-define('DB_USER', 'postgres');
-define('DB_PASS', 'postgres');
+// --- Database (MySQL) ---
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_PORT', getenv('DB_PORT') ?: '3306');
+define('DB_NAME', getenv('DB_NAME') ?: 'tmabulk360');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: 'admin');
 
 function get_db(): PDO {
     static $pdo = null;
     if ($pdo === null) {
-        $dsn = 'pgsql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME;
+        $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=utf8mb4';
         $pdo = new PDO($dsn, DB_USER, DB_PASS, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -24,33 +24,6 @@ function get_db(): PDO {
     }
     return $pdo;
 }
-
-// --- Inventory items ---
-define('INVENTORY_ITEMS', [
-    ['no' => 1,  'item' => 'HIGH PRESSURE WATER JET-200 Bar', 'min_qty' => 1, 'remarks' => '200Bar'],
-    ['no' => 2,  'item' => 'High pressure water jet -500 Bar', 'min_qty' => 1, 'remarks' => 'Reconditioned Old Equipment with broken nozzle or gun or similar issues'],
-    ['no' => 3,  'item' => 'HIGH PRESSURE WATER JET- SET OF SPARE PARTS FOR PUMPING ELEMENT', 'min_qty' => null, 'remarks' => ''],
-    ['no' => 4,  'item' => 'HOLD CLEANING GUN (Combi gun etc)', 'min_qty' => 2, 'remarks' => ''],
-    ['no' => 5,  'item' => 'STAND FOR HOLD CLEANING GUN', 'min_qty' => 2, 'remarks' => ''],
-    ['no' => 6,  'item' => 'CHEMICAL APPLICATOR UNIT', 'min_qty' => 1, 'remarks' => 'Air Operated Chemical Pump'],
-    ['no' => 7,  'item' => 'TELESCOPIC POLE FOR REACHING HIGH AREAS BY THE USE OF CHEMICAL APPLICATOR', 'min_qty' => 1, 'remarks' => 'Mention how many meters long'],
-    ['no' => 8,  'item' => 'SPRAY FOAM SYSTEM WITH MINI GUN (CHEMICAL APPLICATION)', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 9,  'item' => 'ALLUMINIUM/ STEEL SCAFFOLDING TOWER or SIMILAR EQUIPMENT', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 10, 'item' => 'MAN CAGE/BASKET/SIMILAR EQUIPMENT LIKE MOVABLE PLATFORMS, LADDER ETC USED TO REACH UPPER PARTS OF CARGO HOLDS BY THE USE OF SHIP\'S CRANE', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 11, 'item' => 'WOODEN STAGES', 'min_qty' => 2, 'remarks' => 'Gondola'],
-    ['no' => 12, 'item' => 'TELESCOPIC LADDER', 'min_qty' => 2, 'remarks' => 'Maximum 6mtrs'],
-    ['no' => 13, 'item' => 'AIRLESS PAINT SPRAY MACHINE', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 14, 'item' => 'EXTENSION POLE FOR PAINT SPRAY MACHINE', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 15, 'item' => 'HEAVY DUTY DESCALING MACHINES FOR TANK TOPS (Rustibus, Scatol etc)', 'min_qty' => 1, 'remarks' => 'Reconditioned Old Equipment'],
-    ['no' => 16, 'item' => 'PNEUMATIC SCALING HAMMER', 'min_qty' => 4, 'remarks' => ''],
-    ['no' => 17, 'item' => 'TELESCOPIC POLE', 'min_qty' => 4, 'remarks' => '5mtrs'],
-    ['no' => 18, 'item' => 'FIXED AIR COMPRESSOR (For Deck use)', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 19, 'item' => 'ELECTRICAL SUBMERSIBLE PUMP capable of transferring cargo hold wash water from tanktop to overboard or in wash water tank', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 20, 'item' => 'WILDEN PUMP (diaphragm air pump) capable of transferring cargo hold wash water from tanktop to overboard or in wash water tank', 'min_qty' => 1, 'remarks' => ''],
-    ['no' => 21, 'item' => 'CHEMICAL PROTECTION SUIT', 'min_qty' => 3, 'remarks' => ''],
-    ['no' => 22, 'item' => 'RESPIRATION FACE MASK', 'min_qty' => 5, 'remarks' => ''],
-    ['no' => 23, 'item' => 'SPARE FILTER FOR FULL FACE MASK', 'min_qty' => 4, 'remarks' => ''],
-]);
 
 // --- Auth helper ---
 function is_logged_in(): bool {
@@ -62,6 +35,26 @@ function require_login(): void {
         header('Location: login.php');
         exit;
     }
+}
+
+function is_admin(): bool {
+    return ($_SESSION['username'] ?? '') === 'Admin';
+}
+
+function require_admin(): void {
+    require_login();
+    if (!is_admin()) {
+        header('Location: inventory.php');
+        exit;
+    }
+}
+
+function generate_inventory_id(PDO $db): string {
+    $prefix = 'INV-' . date('Ymd') . '-';
+    $stmt = $db->prepare("SELECT COUNT(DISTINCT inventory_id) FROM inventory_submissions WHERE inventory_id LIKE ?");
+    $stmt->execute([$prefix . '%']);
+    $seq = (int)$stmt->fetchColumn() + 1;
+    return $prefix . str_pad($seq, 3, '0', STR_PAD_LEFT);
 }
 
 function e(string $value): string {

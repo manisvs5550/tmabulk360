@@ -1,4 +1,4 @@
-    <script src="static/js/main.js"></script>
+    <script src="static/js/main.js?v=2"></script>
     <script>
         const sidebar = document.getElementById('sidebar');
         const toggleBtn = document.getElementById('sidebarToggle');

@@ -14,7 +14,7 @@ $current_lang = get_lang();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($page_title ?? 'TMA Operations 360') ?></title>
     <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" href="static/css/dashboard.css?v=12">
+    <link rel="stylesheet" href="static/css/dashboard.css?v=18">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -43,12 +43,14 @@ $current_lang = get_lang();
                         <i class="fa-solid fa-caret-down"></i>
                     </button>
                     <div class="lang-dropdown">
+                        <div class="lang-dropdown-inner">
                         <?php foreach (LANGUAGE_LABELS as $code => $label): ?>
                         <a href="?set_lang=<?= $code ?>" class="lang-option<?= $code === $current_lang ? ' active' : '' ?>">
                             <span class="lang-code"><?= strtoupper($code) ?></span>
                             <span><?= e($label) ?></span>
                         </a>
                         <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
                 <!-- User Profile Menu -->
@@ -75,6 +77,7 @@ $current_lang = get_lang();
             <a href="dashboard.php" class="sidebar-link<?= $current_page === 'dashboard' ? ' active' : '' ?>" data-tip="<?= e(t('dashboard')) ?>">
                 <i class="fa-solid fa-house"></i><span><?= e(t('dashboard')) ?></span>
             </a>
+            <?php if (is_admin()): ?>
             <a href="users.php" class="sidebar-link<?= $current_page === 'users' ? ' active' : '' ?>" data-tip="<?= e(t('users')) ?>">
                 <i class="fa-solid fa-users"></i><span><?= e(t('users')) ?></span>
             </a>
@@ -105,8 +108,14 @@ $current_lang = get_lang();
             <a href="#" class="sidebar-link" data-tip="<?= e(t('overview')) ?>">
                 <i class="fa-solid fa-globe"></i><span><?= e(t('overview')) ?></span>
             </a>
+            <?php endif; ?>
             <a href="inventory.php" class="sidebar-link<?= in_array($current_page, ['inventory', 'inventory_history']) ? ' active' : '' ?>" data-tip="<?= e(t('inventory')) ?>">
                 <i class="fa-solid fa-clipboard-list"></i><span><?= e(t('inventory')) ?></span>
             </a>
+            <?php if (is_admin()): ?>
+            <a href="inventory_items.php" class="sidebar-link<?= $current_page === 'inventory_items' ? ' active' : '' ?>" data-tip="<?= e(t('manage_items')) ?>">
+                <i class="fa-solid fa-boxes-stacked"></i><span><?= e(t('manage_items')) ?></span>
+            </a>
+            <?php endif; ?>
         </div>
     </aside>

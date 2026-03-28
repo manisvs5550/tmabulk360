@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $db = get_db();
-        $stmt = $db->prepare('SELECT id, username, password, language FROM users WHERE username = ?');
+        $stmt = $db->prepare('SELECT id, username, password, language, ship_assigned FROM users WHERE username = ?');
         $stmt->execute([$username]);
         $user = $stmt->fetch();
 
@@ -16,13 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['language'] = $user['language'] ?? 'en';
+            $_SESSION['ship_assigned'] = $user['ship_assigned'];
             header('Location: dashboard.php');
             exit;
         } else {
             $error = t('invalid_credentials');
         }
     } catch (Exception $ex) {
-        $error = t('invalid_credentials');
+        $error = 'Database connection error: ' . $ex->getMessage();
     }
 }
 ?>

@@ -1,10 +1,50 @@
 <?php
 require_once __DIR__ . '/config.php';
-require_login();
+require_admin();
 
 $db = get_db();
 $error = '';
 $success = '';
+
+// Upload directory for vessel PDFs
+$upload_dir = __DIR__ . '/uploads/vessels/';
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0755, true);
+}
+
+/**
+ * Handle a single PDF file upload. Returns the stored filename or null.
+ */
+function handle_pdf_upload(string $field, string $upload_dir, ?string $existing = null): ?string {
+    if (!isset($_FILES[$field]) || $_FILES[$field]['error'] !== UPLOAD_ERR_OK) {
+        // If the user ticked the remove checkbox, delete the old file
+        if (!empty($_POST['remove_' . $field]) && $existing) {
+            $path = $upload_dir . $existing;
+            if (is_file($path)) unlink($path);
+            return '';
+        }
+        return null; // no change
+    }
+    $file = $_FILES[$field];
+    // Validate: only allow PDF
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']);
+    if ($mime !== 'application/pdf') return null;
+    // Max 20 MB
+    if ($file['size'] > 20 * 1024 * 1024) return null;
+    // Build safe filename
+    $ext = 'pdf';
+    $safe = preg_replace('/[^a-zA-Z0-9_-]/', '_', pathinfo($file['name'], PATHINFO_FILENAME));
+    $filename = $field . '_' . time() . '_' . $safe . '.' . $ext;
+    if (move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
+        // Remove old file if replacing
+        if ($existing && is_file($upload_dir . $existing)) {
+            unlink($upload_dir . $existing);
+        }
+        return $filename;
+    }
+    return null;
+}
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -32,23 +72,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pool_type = 'TMA Bulk Pool';
         }
 
+        // Fetch existing file names for update
+        $existing_files = ['general_arrangement' => null, 'capacity_plan' => null, 'time_charter' => null, 'voyage_charter' => null];
+        if ($action === 'update') {
+            $eid = (int)($_POST['id'] ?? 0);
+            if ($eid > 0) {
+                $es = $db->prepare('SELECT general_arrangement, capacity_plan, time_charter, voyage_charter FROM vessels WHERE id = ?');
+                $es->execute([$eid]);
+                $existing_files = $es->fetch() ?: $existing_files;
+            }
+        }
+
+        // Handle PDF uploads
+        $pdf_fields = ['general_arrangement', 'capacity_plan', 'time_charter', 'voyage_charter'];
+        $pdf_values = [];
+        foreach ($pdf_fields as $pf) {
+            $result = handle_pdf_upload($pf, $upload_dir, $existing_files[$pf] ?? null);
+            if ($result !== null) {
+                $pdf_values[$pf] = $result === '' ? null : $result;
+            } else {
+                $pdf_values[$pf] = $existing_files[$pf] ?? null;
+            }
+        }
+
         if ($name === '') {
             $error = t('error');
         } elseif ($action === 'create') {
-            $stmt = $db->prepare('INSERT INTO vessels (name, pool_type, dwt, draft, built, yard, grain, bale, cranes, has_semi_box, has_open_hatch, has_electric_vent, has_a60, has_grabber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            $stmt->execute([$name, $pool_type, $dwt, $draft, $built, $yard, $grain, $bale, $cranes, $has_semi_box, $has_open_hatch, $has_electric_vent, $has_a60, $has_grabber]);
+            $stmt = $db->prepare('INSERT INTO vessels (name, pool_type, dwt, draft, built, yard, grain, bale, cranes, has_semi_box, has_open_hatch, has_electric_vent, has_a60, has_grabber, general_arrangement, capacity_plan, time_charter, voyage_charter) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmt->execute([$name, $pool_type, $dwt, $draft, $built, $yard, $grain, $bale, $cranes, $has_semi_box, $has_open_hatch, $has_electric_vent, $has_a60, $has_grabber, $pdf_values['general_arrangement'], $pdf_values['capacity_plan'], $pdf_values['time_charter'], $pdf_values['voyage_charter']]);
             $success = t('vessel_created');
         } else {
             $id = (int)($_POST['id'] ?? 0);
             if ($id > 0) {
-                $stmt = $db->prepare('UPDATE vessels SET name = ?, pool_type = ?, dwt = ?, draft = ?, built = ?, yard = ?, grain = ?, bale = ?, cranes = ?, has_semi_box = ?, has_open_hatch = ?, has_electric_vent = ?, has_a60 = ?, has_grabber = ?, updated_at = NOW() WHERE id = ?');
-                $stmt->execute([$name, $pool_type, $dwt, $draft, $built, $yard, $grain, $bale, $cranes, $has_semi_box, $has_open_hatch, $has_electric_vent, $has_a60, $has_grabber, $id]);
+                $stmt = $db->prepare('UPDATE vessels SET name = ?, pool_type = ?, dwt = ?, draft = ?, built = ?, yard = ?, grain = ?, bale = ?, cranes = ?, has_semi_box = ?, has_open_hatch = ?, has_electric_vent = ?, has_a60 = ?, has_grabber = ?, general_arrangement = ?, capacity_plan = ?, time_charter = ?, voyage_charter = ?, updated_at = NOW() WHERE id = ?');
+                $stmt->execute([$name, $pool_type, $dwt, $draft, $built, $yard, $grain, $bale, $cranes, $has_semi_box, $has_open_hatch, $has_electric_vent, $has_a60, $has_grabber, $pdf_values['general_arrangement'], $pdf_values['capacity_plan'], $pdf_values['time_charter'], $pdf_values['voyage_charter'], $id]);
                 $success = t('vessel_updated');
             }
         }
     } elseif ($action === 'delete') {
         $id = (int)($_POST['id'] ?? 0);
         if ($id > 0) {
+            // Remove associated PDF files
+            $ds = $db->prepare('SELECT general_arrangement, capacity_plan, time_charter, voyage_charter FROM vessels WHERE id = ?');
+            $ds->execute([$id]);
+            $del_row = $ds->fetch();
+            if ($del_row) {
+                foreach (['general_arrangement', 'capacity_plan', 'time_charter', 'voyage_charter'] as $df) {
+                    if ($del_row[$df] && is_file($upload_dir . $del_row[$df])) {
+                        unlink($upload_dir . $del_row[$df]);
+                    }
+                }
+            }
             $stmt = $db->prepare('DELETE FROM vessels WHERE id = ?');
             $stmt->execute([$id]);
             $success = t('vessel_deleted');
@@ -74,10 +148,10 @@ if ($feature_filter && in_array($feature_filter, $valid_features, true)) {
     $col = 'has_' . $feature_filter;
     // Re-query with feature filter
     if ($pool_filter) {
-        $stmt = $db->prepare("SELECT * FROM vessels WHERE pool_type = ? AND $col = TRUE ORDER BY name");
+        $stmt = $db->prepare("SELECT * FROM vessels WHERE pool_type = ? AND $col = 1 ORDER BY name");
         $stmt->execute([$pool_filter]);
     } else {
-        $stmt = $db->prepare("SELECT * FROM vessels WHERE $col = TRUE ORDER BY name");
+        $stmt = $db->prepare("SELECT * FROM vessels WHERE $col = 1 ORDER BY name");
         $stmt->execute();
     }
     $vessels_list = $stmt->fetchAll();
@@ -153,7 +227,6 @@ $feature_icons = [
                 <table class="inv-table vessels-table">
                     <thead>
                         <tr>
-                            <th style="width:40px"></th>
                             <th><?= e(t('vessels')) ?></th>
                             <th><?= e(t('dwt_mt')) ?></th>
                             <th><?= e(t('draft_m')) ?></th>
@@ -162,16 +235,13 @@ $feature_icons = [
                             <th><?= e(t('grain_bale')) ?></th>
                             <th><?= e(t('cranes')) ?></th>
                             <th><?= e(t('features')) ?></th>
+                            <th><?= e(t('documents')) ?></th>
+                            <th><?= e(t('actions')) ?></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($vessels_list as $v): ?>
                         <tr>
-                            <td class="cell-expand">
-                                <button class="btn-expand" onclick="toggleVesselActions(this)" title="Actions">
-                                    <i class="fa-solid fa-plus"></i>
-                                </button>
-                            </td>
                             <td><strong class="vessel-name"><?= e($v['name']) ?></strong>
                                 <?php if ($v['pool_type'] === 'MPP Tonnage'): ?>
                                     <span class="pool-badge pool-mpp">MPP</span>
@@ -192,22 +262,37 @@ $feature_icons = [
                                 <?php if ($v['has_a60']): ?><span class="feature-icon-badge" title="<?= e(t('a60')) ?>"><i class="<?= $feature_icons['a60'] ?>"></i></span><?php endif; ?>
                                 <?php if ($v['has_grabber']): ?><span class="feature-icon-badge" title="<?= e(t('grabber')) ?>"><i class="<?= $feature_icons['grabber'] ?>"></i></span><?php endif; ?>
                             </td>
-                        </tr>
-                        <!-- Hidden action row -->
-                        <tr class="vessel-action-row" style="display:none">
-                            <td colspan="9">
-                                <div class="vessel-action-bar">
-                                    <button class="btn btn-outline btn-sm" onclick='openEditVessel(<?= json_encode($v, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
-                                        <i class="fa-solid fa-pen-to-square"></i> <?= e(t('edit')) ?>
+                            <td class="cell-docs">
+                                <?php
+                                $doc_fields = [
+                                    'general_arrangement' => ['icon' => 'fa-solid fa-drafting-compass', 'label' => t('general_arrangement')],
+                                    'capacity_plan'       => ['icon' => 'fa-solid fa-chart-pie',        'label' => t('capacity_plan')],
+                                    'time_charter'        => ['icon' => 'fa-solid fa-clock',            'label' => t('time_charter')],
+                                    'voyage_charter'      => ['icon' => 'fa-solid fa-route',            'label' => t('voyage_charter')],
+                                ];
+                                foreach ($doc_fields as $dk => $di):
+                                    if (!empty($v[$dk])):
+                                ?>
+                                    <a href="uploads/vessels/<?= e($v[$dk]) ?>" target="_blank" class="doc-badge" title="<?= e($di['label']) ?>">
+                                        <i class="<?= $di['icon'] ?>"></i>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="doc-badge doc-badge--empty" title="<?= e($di['label']) ?> — <?= e(t('no_file')) ?>">
+                                        <i class="<?= $di['icon'] ?>"></i>
+                                    </span>
+                                <?php endif; endforeach; ?>
+                            </td>
+                            <td class="cell-actions">
+                                <button type="button" class="btn-icon btn-icon--edit" title="<?= e(t('edit')) ?>" onclick='openEditVessel(<?= json_encode($v, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <form method="POST" style="display:inline" onsubmit="return confirm('<?= e(t('confirm_delete')) ?>')">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="id" value="<?= $v['id'] ?>">
+                                    <button type="submit" class="btn-icon btn-icon--delete" title="<?= e(t('delete')) ?>">
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
-                                    <form method="POST" style="display:inline" onsubmit="return confirm('<?= e(t('confirm_delete')) ?>')">
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="id" value="<?= $v['id'] ?>">
-                                        <button type="submit" class="btn btn-outline btn-sm btn-danger">
-                                            <i class="fa-solid fa-trash"></i> <?= e(t('delete')) ?>
-                                        </button>
-                                    </form>
-                                </div>
+                                </form>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -231,7 +316,7 @@ $feature_icons = [
             <h3><i class="fa-solid fa-ship"></i> <?= e(t('add_vessel')) ?></h3>
             <button class="modal-close" onclick="closeModal('addVesselModal')">&times;</button>
         </div>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="create">
             <div class="form-row">
                 <div class="form-group">
@@ -291,6 +376,27 @@ $feature_icons = [
                     <label class="feature-check"><input type="checkbox" name="has_grabber" value="1"> <i class="<?= $feature_icons['grabber'] ?>"></i> <?= e(t('grabber')) ?></label>
                 </div>
             </div>
+            <div class="form-group">
+                <label><?= e(t('documents')) ?></label>
+                <div class="pdf-upload-grid">
+                    <div class="pdf-upload-item">
+                        <label for="add-v-ga"><i class="fa-solid fa-drafting-compass"></i> <?= e(t('general_arrangement')) ?></label>
+                        <input type="file" id="add-v-ga" name="general_arrangement" accept=".pdf">
+                    </div>
+                    <div class="pdf-upload-item">
+                        <label for="add-v-cp"><i class="fa-solid fa-chart-pie"></i> <?= e(t('capacity_plan')) ?></label>
+                        <input type="file" id="add-v-cp" name="capacity_plan" accept=".pdf">
+                    </div>
+                    <div class="pdf-upload-item">
+                        <label for="add-v-tc"><i class="fa-solid fa-clock"></i> <?= e(t('time_charter')) ?></label>
+                        <input type="file" id="add-v-tc" name="time_charter" accept=".pdf">
+                    </div>
+                    <div class="pdf-upload-item">
+                        <label for="add-v-vc"><i class="fa-solid fa-route"></i> <?= e(t('voyage_charter')) ?></label>
+                        <input type="file" id="add-v-vc" name="voyage_charter" accept=".pdf">
+                    </div>
+                </div>
+            </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline btn-md" onclick="closeModal('addVesselModal')"><?= e(t('cancel')) ?></button>
                 <button type="submit" class="btn btn-primary btn-md"><i class="fa-solid fa-check"></i> <?= e(t('save')) ?></button>
@@ -306,7 +412,7 @@ $feature_icons = [
             <h3><i class="fa-solid fa-ship"></i> <?= e(t('edit_vessel')) ?></h3>
             <button class="modal-close" onclick="closeModal('editVesselModal')">&times;</button>
         </div>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" id="edit-v-id">
             <div class="form-row">
@@ -367,6 +473,35 @@ $feature_icons = [
                     <label class="feature-check"><input type="checkbox" name="has_grabber" value="1" id="edit-v-grabber"> <i class="<?= $feature_icons['grabber'] ?>"></i> <?= e(t('grabber')) ?></label>
                 </div>
             </div>
+            <div class="form-group">
+                <label><?= e(t('documents')) ?></label>
+                <div class="pdf-upload-grid">
+                    <div class="pdf-upload-item">
+                        <label for="edit-v-ga"><i class="fa-solid fa-drafting-compass"></i> <?= e(t('general_arrangement')) ?></label>
+                        <input type="file" id="edit-v-ga" name="general_arrangement" accept=".pdf">
+                        <span class="pdf-current" id="edit-v-ga-current"></span>
+                        <label class="pdf-remove"><input type="checkbox" name="remove_general_arrangement" value="1" id="edit-v-ga-remove"> <?= e(t('remove_file')) ?></label>
+                    </div>
+                    <div class="pdf-upload-item">
+                        <label for="edit-v-cp"><i class="fa-solid fa-chart-pie"></i> <?= e(t('capacity_plan')) ?></label>
+                        <input type="file" id="edit-v-cp" name="capacity_plan" accept=".pdf">
+                        <span class="pdf-current" id="edit-v-cp-current"></span>
+                        <label class="pdf-remove"><input type="checkbox" name="remove_capacity_plan" value="1" id="edit-v-cp-remove"> <?= e(t('remove_file')) ?></label>
+                    </div>
+                    <div class="pdf-upload-item">
+                        <label for="edit-v-tc"><i class="fa-solid fa-clock"></i> <?= e(t('time_charter')) ?></label>
+                        <input type="file" id="edit-v-tc" name="time_charter" accept=".pdf">
+                        <span class="pdf-current" id="edit-v-tc-current"></span>
+                        <label class="pdf-remove"><input type="checkbox" name="remove_time_charter" value="1" id="edit-v-tc-remove"> <?= e(t('remove_file')) ?></label>
+                    </div>
+                    <div class="pdf-upload-item">
+                        <label for="edit-v-vc"><i class="fa-solid fa-route"></i> <?= e(t('voyage_charter')) ?></label>
+                        <input type="file" id="edit-v-vc" name="voyage_charter" accept=".pdf">
+                        <span class="pdf-current" id="edit-v-vc-current"></span>
+                        <label class="pdf-remove"><input type="checkbox" name="remove_voyage_charter" value="1" id="edit-v-vc-remove"> <?= e(t('remove_file')) ?></label>
+                    </div>
+                </div>
+            </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-outline btn-md" onclick="closeModal('editVesselModal')"><?= e(t('cancel')) ?></button>
                 <button type="submit" class="btn btn-primary btn-md"><i class="fa-solid fa-check"></i> <?= e(t('save')) ?></button>
@@ -378,20 +513,11 @@ $feature_icons = [
 <script>
 function openModal(id) {
     document.getElementById(id).classList.add('active');
+    document.getElementById(id).style.display = 'flex';
 }
 function closeModal(id) {
     document.getElementById(id).classList.remove('active');
-}
-function toggleVesselActions(btn) {
-    var row = btn.closest('tr').nextElementSibling;
-    var icon = btn.querySelector('i');
-    if (row.style.display === 'none') {
-        row.style.display = '';
-        icon.className = 'fa-solid fa-minus';
-    } else {
-        row.style.display = 'none';
-        icon.className = 'fa-solid fa-plus';
-    }
+    document.getElementById(id).style.display = 'none';
 }
 function openEditVessel(v) {
     document.getElementById('edit-v-id').value = v.id;
@@ -409,11 +535,31 @@ function openEditVessel(v) {
     document.getElementById('edit-v-electric_vent').checked = v.has_electric_vent;
     document.getElementById('edit-v-a60').checked = v.has_a60;
     document.getElementById('edit-v-grabber').checked = v.has_grabber;
+    // PDF current-file indicators
+    var pdfMap = {
+        'ga': 'general_arrangement',
+        'cp': 'capacity_plan',
+        'tc': 'time_charter',
+        'vc': 'voyage_charter'
+    };
+    for (var key in pdfMap) {
+        var fname = v[pdfMap[key]];
+        var cur = document.getElementById('edit-v-' + key + '-current');
+        var rmv = document.getElementById('edit-v-' + key + '-remove');
+        if (fname) {
+            cur.innerHTML = '<a href="uploads/vessels/' + encodeURIComponent(fname) + '" target="_blank"><i class="fa-solid fa-file-pdf"></i> ' + fname.substring(0, 40) + '</a>';
+            rmv.parentElement.style.display = '';
+        } else {
+            cur.innerHTML = '';
+            rmv.parentElement.style.display = 'none';
+        }
+        rmv.checked = false;
+    }
     openModal('editVesselModal');
 }
 document.querySelectorAll('.modal-overlay').forEach(function(el) {
     el.addEventListener('click', function(e) {
-        if (e.target === el) el.classList.remove('active');
+        if (e.target === el) closeModal(el.id);
     });
 });
 </script>

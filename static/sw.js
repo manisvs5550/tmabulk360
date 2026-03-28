@@ -1,11 +1,12 @@
 // TMA Operations 360 — Service Worker
 // Caches shell + static assets for offline maritime use
 
-const CACHE_NAME = 'tmaops360-v6';
+const CACHE_NAME = 'tmaops360-v7';
 const SHELL_ASSETS = [
     '/',
     '/login.php',
     '/offline.php',
+    '/inventory.php',
     '/static/css/style.css',
     '/static/css/dashboard.css',
     '/static/js/main.js',
@@ -81,6 +82,9 @@ self.addEventListener('sync', (event) => {
     if (event.tag === 'sync-contact-form') {
         event.waitUntil(syncQueuedForms());
     }
+    if (event.tag === 'sync-inventory') {
+        event.waitUntil(syncInventoryQueue());
+    }
 });
 
 async function syncQueuedForms() {
@@ -98,6 +102,52 @@ async function syncQueuedForms() {
             await cache.delete(request);
         } catch (e) {
             // Still offline — will retry on next sync
+            break;
+        }
+    }
+}
+
+// Inventory offline sync via IndexedDB
+async function syncInventoryQueue() {
+    const INV_DB_NAME = 'tmaops360_inventory';
+    const INV_STORE = 'pending_submissions';
+
+    const db = await new Promise((resolve, reject) => {
+        const req = indexedDB.open(INV_DB_NAME, 1);
+        req.onupgradeneeded = () => {
+            const d = req.result;
+            if (!d.objectStoreNames.contains(INV_STORE)) {
+                d.createObjectStore(INV_STORE, { keyPath: 'id', autoIncrement: true });
+            }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+
+    const entries = await new Promise((resolve) => {
+        const tx = db.transaction(INV_STORE, 'readonly');
+        const req = tx.objectStore(INV_STORE).getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => resolve([]);
+    });
+
+    for (const entry of entries) {
+        try {
+            const resp = await fetch('/inventory_sync.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entry.payload),
+                credentials: 'same-origin',
+            });
+            if (resp.ok) {
+                await new Promise((resolve) => {
+                    const tx = db.transaction(INV_STORE, 'readwrite');
+                    tx.objectStore(INV_STORE).delete(entry.id);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => resolve();
+                });
+            }
+        } catch {
             break;
         }
     }
