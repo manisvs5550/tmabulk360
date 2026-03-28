@@ -1,0 +1,4 @@
+# Render deployment files
+Dockerfile
+render.yaml
+.htaccess
